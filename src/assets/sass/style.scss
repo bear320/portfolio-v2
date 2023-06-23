@@ -4,3 +4,7 @@
 @import 'base.scss';
 @import 'theme.scss';
 @import 'class.scss';
+
+[v-cloak] {
+  display: none;
+}

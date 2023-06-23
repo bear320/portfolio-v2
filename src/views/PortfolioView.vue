@@ -38,7 +38,7 @@
       <!-- 數據統計 -->
       <div class="statistics-wrapper grid">
         <div class="info" v-for="item in statistics" :key="item.id">
-          <h3 class="number">{{ item.data }}</h3>
+          <h3 class="number" v-cloak>{{ item.data }}</h3>
           <p class="desc">{{ item.desc }}</p>
         </div>
       </div>
@@ -60,10 +60,45 @@
       </div>
     </div>
   </header>
+
+  <!-- 標籤頁 -->
+  <main class="main">
+    <section class="container tabs-wrapper">
+      <!-- 標籤 -->
+      <div class="tabs">
+        <span
+          v-for="tab in tabList"
+          :key="tab.id"
+          class="tab"
+          :class="{ active: currentTab === tab.enum }"
+          @click="currentTab = tab.enum"
+        >
+          {{ tab.title }}
+        </span>
+      </div>
+
+      <!-- 內容 -->
+      <transition-group>
+        <component
+          v-show="currentTab === item.tab"
+          v-for="(item, index) in tabContent"
+          :key="index"
+          :is="item.component"
+        ></component>
+      </transition-group>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <span class="copy-right"> &#169; Oliver Xiong. All rights reserved. </span>
+  </footer>
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref } from 'vue';
+import { ref, reactive, computed, type Component } from 'vue';
+import AboutTab from '@/components/AboutTab.vue';
+import ProjectsTab from '@/components/ProjectsTab.vue';
+import SkillsTab from '@/components/SkillsTab.vue';
 // import { collection, onSnapshot } from 'firebase/firestore';
 // import { db } from '@/firebase';
 
@@ -107,6 +142,58 @@ const statistics = reactive<Statistics[]>([
 const resumeURL = ref<string>(
   'https://drive.google.com/file/d/1rlC4dUzS7jXXA0C0Ll0ZLtPQPUNzb5dN/view?usp=sharing'
 );
+
+/* --------------- 標籤頁 --------------- */
+
+// enum: Tab
+enum Tab {
+  about = 'about',
+  projects = 'projects',
+  skills = 'skills'
+}
+
+// 目前標籤
+const currentTab = ref<Tab>(Tab.about);
+
+// type: TabList
+type TabList = {
+  id: number;
+  title: string;
+  enum: Tab;
+};
+
+// 標籤列表
+const tabList = reactive<TabList[]>([
+  {
+    id: 1,
+    title: '簡介',
+    enum: Tab.about
+  },
+  {
+    id: 2,
+    title: '作品集',
+    enum: Tab.projects
+  },
+  {
+    id: 3,
+    title: '技能',
+    enum: Tab.skills
+  }
+]);
+
+// type: TabContent
+type TabContent = {
+  id: number;
+  tab: Tab;
+  component: Component;
+};
+
+// 標籤內容
+const tabContent = reactive<TabContent[]>([
+  { id: 1, tab: Tab.about, component: AboutTab },
+  { id: 2, tab: Tab.projects, component: ProjectsTab },
+  { id: 3, tab: Tab.skills, component: SkillsTab }
+]);
 </script>
 
 <style lang="scss" scoped>
@@ -272,8 +359,8 @@ const resumeURL = ref<string>(
 }
 
 .main {
-  .filter-wrapper {
-    .content {
+  .tabs-wrapper {
+    .tabs {
       margin: 2rem 0 2.5rem;
       background-color: var(--text-color-lighten);
       padding: 0.375rem;
@@ -287,7 +374,7 @@ const resumeURL = ref<string>(
         margin: 3rem auto;
       }
 
-      a {
+      .tab {
         width: 100%;
         height: 100%;
         padding: 1rem;
@@ -301,8 +388,8 @@ const resumeURL = ref<string>(
         cursor: pointer;
         transition: 0.3s;
 
-        &:hover,
-        &.router-link-exact-active {
+        &.active,
+        &:hover {
           background-color: var(--body-color);
         }
       }
