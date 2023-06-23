@@ -91,7 +91,6 @@ const getProjects = async () => {
 
 onMounted(() => {
   getProjects();
-  console.log(myProjects);
 });
 </script>
 

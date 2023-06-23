@@ -95,7 +95,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, computed, type Component } from 'vue';
+import { ref, reactive, computed, type Component, markRaw } from 'vue';
 import AboutTab from '@/components/AboutTab.vue';
 import ProjectsTab from '@/components/ProjectsTab.vue';
 import SkillsTab from '@/components/SkillsTab.vue';
@@ -190,9 +190,9 @@ type TabContent = {
 
 // 標籤內容
 const tabContent = reactive<TabContent[]>([
-  { id: 1, tab: Tab.about, component: AboutTab },
-  { id: 2, tab: Tab.projects, component: ProjectsTab },
-  { id: 3, tab: Tab.skills, component: SkillsTab }
+  { id: 1, tab: Tab.about, component: markRaw(AboutTab) },
+  { id: 2, tab: Tab.projects, component: markRaw(ProjectsTab) },
+  { id: 3, tab: Tab.skills, component: markRaw(SkillsTab) }
 ]);
 </script>
 
