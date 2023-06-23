@@ -1,8 +1,12 @@
 <template>
   <header class="profile container">
     <!-- 切換主題 -->
-    <i class="change-theme ri-moon-line" v-if="!isDarkMode" @click="toggleTheme"></i>
-    <i class="change-theme ri-sun-line" v-else @click="toggleTheme"></i>
+    <i
+      class="change-theme ri-moon-line"
+      v-if="!appStore.isDarkMode"
+      @click="appStore.toggleTheme"
+    ></i>
+    <i class="change-theme ri-sun-line" v-else @click="appStore.toggleTheme"></i>
 
     <!-- 個人資訊 -->
     <div class="profile-wrapper grid">
@@ -70,8 +74,8 @@
           v-for="tab in tabList"
           :key="tab.id"
           class="tab"
-          :class="{ active: currentTab === tab.enum }"
-          @click="currentTab = tab.enum"
+          :class="{ active: appStore.currentTab === tab.enum }"
+          @click="appStore.currentTab = tab.enum"
         >
           {{ tab.title }}
         </span>
@@ -80,7 +84,7 @@
       <!-- 內容 -->
       <transition-group>
         <component
-          v-show="currentTab === item.tab"
+          v-show="appStore.currentTab === item.tab"
           v-for="(item, index) in tabContent"
           :key="index"
           :is="item.component"
@@ -96,21 +100,25 @@
 
 <script lang="ts" setup>
 import { ref, reactive, computed, type Component, markRaw } from 'vue';
+import { useAppStore } from '@/stores';
 import AboutTab from '@/components/AboutTab.vue';
 import ProjectsTab from '@/components/ProjectsTab.vue';
 import SkillsTab from '@/components/SkillsTab.vue';
 // import { collection, onSnapshot } from 'firebase/firestore';
 // import { db } from '@/firebase';
 
+// store
+const appStore = useAppStore();
+
 /* --------------- 主題 --------------- */
 
 // 現在主題
-const isDarkMode = ref<boolean>(false);
+// const isDarkMode = ref<boolean>(false);
 
 // 切換主題
-const toggleTheme = () => {
-  isDarkMode.value = !isDarkMode.value;
-};
+// const toggleTheme = () => {
+//   isDarkMode.value = !isDarkMode.value;
+// };
 
 /* --------------- 統計數據 --------------- */
 
@@ -153,7 +161,7 @@ enum Tab {
 }
 
 // 目前標籤
-const currentTab = ref<Tab>(Tab.about);
+// const currentTab = ref<Tab>(Tab.about);
 
 // type: TabList
 type TabList = {
