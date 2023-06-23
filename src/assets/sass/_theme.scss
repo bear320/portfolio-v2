@@ -38,9 +38,9 @@ body.dark-theme {
   }
 
   .profile {
-    .profile-wrap {
-      .btn-wrap {
-        .small-btn-wrap {
+    .profile-wrapper {
+      .btn-wrapper {
+        .small-btn-wrapper {
           .btn-gray {
             background-color: var(--container-color);
 
@@ -54,8 +54,8 @@ body.dark-theme {
   }
 
   .main {
-    .filter-wrap {
-      .content {
+    .tabs-wrapper {
+      .tabs {
         background-color: var(--container-color);
       }
     }
