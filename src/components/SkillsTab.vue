@@ -84,7 +84,7 @@ const design = reactive<string[]>([
 
 const frontend = reactive<string[]>([
   'HTML',
-  'CSS & SASS',
+  'CSS/SASS',
   'JavaScript',
   'TypeScript',
   'Vue.js',
