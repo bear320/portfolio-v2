@@ -87,12 +87,14 @@
       </div>
 
       <!-- 內容 -->
-      <component
-        v-show="appStore.currentTab === item.tab"
-        v-for="(item, index) in tabContent"
-        :key="index"
-        :is="item.component"
-      ></component>
+      <transition-group>
+        <component
+          v-show="appStore.currentTab === item.tab"
+          v-for="(item, index) in tabContent"
+          :key="index"
+          :is="item.component"
+        ></component>
+      </transition-group>
     </section>
   </main>
 
