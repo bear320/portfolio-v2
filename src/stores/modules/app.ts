@@ -11,6 +11,8 @@ enum Tab {
 export const useAppStore = defineStore('app', () => {
   const currentTab = ref<Tab>(Tab.about);
   const isDarkMode = ref<boolean>(false);
+  const isLoading = ref<boolean>(false);
+  const isShowModalEmail = ref<boolean>(false);
   function toggleTheme() {
     // 透過 localStorage 獲取先前主題
     const previousTheme = localStorage.getItem('isDarkMode');
@@ -29,5 +31,5 @@ export const useAppStore = defineStore('app', () => {
     // 將目前主題儲存至 localStorage
     localStorage.setItem('isDarkMode', isDarkMode.value === true ? 'true' : 'false');
   }
-  return { currentTab, isDarkMode, toggleTheme };
+  return { currentTab, isDarkMode, isLoading, isShowModalEmail, toggleTheme };
 });

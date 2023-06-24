@@ -38,12 +38,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue';
+import { reactive, onMounted } from 'vue';
+import { useAppStore } from '@/stores';
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase';
 
-// 是否載入完成
-const isLoading = ref<boolean>(false);
+// store
+const appStore = useAppStore();
 
 // type: Project
 type Project = {
@@ -62,7 +63,7 @@ const myProjects = reactive<Project[]>([]);
 
 // 獲取作品集
 const getProjects = async () => {
-  isLoading.value = true;
+  appStore.isLoading = true;
 
   const q = query(collection(db, 'projects'), where('isShow', '==', true), orderBy('id'));
 
@@ -87,7 +88,7 @@ const getProjects = async () => {
     myProjects.splice(0, myProjects.length, ...firebaseProjects);
   });
 
-  isLoading.value = false;
+  appStore.isLoading = false;
 };
 
 onMounted(() => {

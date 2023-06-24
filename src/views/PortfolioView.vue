@@ -58,7 +58,11 @@
           <a href="tel:+886-960779920" class="btn btn-small btn-gray">
             <i class="ri-phone-line"></i>
           </a>
-          <a href="javascript:;" class="btn btn-small btn-gray" @click="() => {}">
+          <a
+            href="javascript:;"
+            class="btn btn-small btn-gray"
+            @click="appStore.isShowModalEmail = true"
+          >
             <i class="ri-mail-line"></i>
           </a>
         </div>
@@ -94,6 +98,11 @@
     </section>
   </main>
 
+  <!-- Email -->
+  <transition>
+    <EmailModal v-if="appStore.isShowModalEmail" class="email-modal" />
+  </transition>
+
   <footer class="footer container">
     <span class="copy-right"> &#169; Oliver Xiong. All rights reserved. </span>
   </footer>
@@ -105,6 +114,7 @@ import { useAppStore } from '@/stores';
 import AboutTab from '@/components/AboutTab.vue';
 import ProjectsTab from '@/components/ProjectsTab.vue';
 import SkillsTab from '@/components/SkillsTab.vue';
+import EmailModal from '@/components/EmailModal.vue';
 import { doc, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase';
 
@@ -161,7 +171,7 @@ const resumeURL = ref<string>('');
 // 獲取履歷連結
 const getResumeURL = async () => {
   onSnapshot(doc(db, 'documents', 'CV'), (doc) => {
-    resumeURL.value = doc.data().link;
+    resumeURL.value = doc.data()!.link;
   });
 };
 
@@ -430,6 +440,13 @@ const tabContent = reactive<TabContent[]>([
   }
 }
 
+.email-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 // Scroll Bar
 ::-webkit-scrollbar {
   width: 0.6rem;
@@ -444,5 +461,15 @@ const tabContent = reactive<TabContent[]>([
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: hsl(var(--hue), 8%, 44%);
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>
