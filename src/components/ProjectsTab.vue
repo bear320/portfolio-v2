@@ -39,7 +39,7 @@
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from 'vue';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase';
 
 // 是否載入完成
@@ -64,7 +64,9 @@ const myProjects = reactive<Project[]>([]);
 const getProjects = async () => {
   isLoading.value = true;
 
-  onSnapshot(collection(db, 'projects'), (querySnapshot) => {
+  const q = query(collection(db, 'projects'), where('isShow', '==', true), orderBy('id'));
+
+  onSnapshot(q, (querySnapshot) => {
     const firebaseProjects = reactive<Project[]>([]);
 
     querySnapshot.forEach((doc) => {
@@ -82,7 +84,6 @@ const getProjects = async () => {
       firebaseProjects.push(project);
     });
 
-    firebaseProjects.sort((a, b) => a.id - b.id);
     myProjects.splice(0, myProjects.length, ...firebaseProjects);
   });
 

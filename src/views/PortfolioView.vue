@@ -42,7 +42,8 @@
       <!-- 數據統計 -->
       <div class="statistics-wrapper grid">
         <div class="info" v-for="item in statistics" :key="item.id">
-          <h3 class="number" v-cloak>{{ item.data }}</h3>
+          <h3 class="number" v-if="item.id === 2" v-cloak>{{ projectsLength }}+</h3>
+          <h3 class="number" v-else v-cloak>{{ item.data }}</h3>
           <p class="desc">{{ item.desc }}</p>
         </div>
       </div>
@@ -99,26 +100,22 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, computed, type Component, markRaw } from 'vue';
+import { ref, reactive, computed, onMounted, type Component, markRaw } from 'vue';
 import { useAppStore } from '@/stores';
 import AboutTab from '@/components/AboutTab.vue';
 import ProjectsTab from '@/components/ProjectsTab.vue';
 import SkillsTab from '@/components/SkillsTab.vue';
-// import { collection, onSnapshot } from 'firebase/firestore';
-// import { db } from '@/firebase';
+import { doc, collection, query, where, onSnapshot } from 'firebase/firestore';
+import { db } from '@/firebase';
 
 // store
 const appStore = useAppStore();
 
-/* --------------- 主題 --------------- */
-
-// 現在主題
-// const isDarkMode = ref<boolean>(false);
-
-// 切換主題
-// const toggleTheme = () => {
-//   isDarkMode.value = !isDarkMode.value;
-// };
+// onMounted
+onMounted(async () => {
+  await getResumeURL();
+  await getProjectsLength();
+});
 
 /* --------------- 統計數據 --------------- */
 
@@ -137,19 +134,36 @@ const currentAge = computed(() => {
   return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
 });
 
+// 完成專案數量
+const projectsLength = ref<number>(0);
+
+// 獲取完成專案數量
+const getProjectsLength = async () => {
+  const q = query(collection(db, 'projects'), where('isShow', '==', true));
+
+  onSnapshot(q, (querySnapshot) => {
+    projectsLength.value = querySnapshot.docs.length;
+  });
+};
+
 // 統計清單
 const statistics = reactive<Statistics[]>([
   { id: 1, desc: '工作經驗', data: '2Y+' },
-  { id: 2, desc: '完成專案', data: '7+' },
+  { id: 2, desc: '完成專案', data: '' },
   { id: 3, desc: '目前年紀', data: `${currentAge.value}Y` }
 ]);
 
 /* --------------- 履歷 --------------- */
 
 // 履歷連結
-const resumeURL = ref<string>(
-  'https://drive.google.com/file/d/1rlC4dUzS7jXXA0C0Ll0ZLtPQPUNzb5dN/view?usp=sharing'
-);
+const resumeURL = ref<string>('');
+
+// 獲取履歷連結
+const getResumeURL = async () => {
+  onSnapshot(doc(db, 'documents', 'CV'), (doc) => {
+    resumeURL.value = doc.data().link;
+  });
+};
 
 /* --------------- 標籤頁 --------------- */
 
@@ -159,9 +173,6 @@ enum Tab {
   projects = 'projects',
   skills = 'skills'
 }
-
-// 目前標籤
-// const currentTab = ref<Tab>(Tab.about);
 
 // type: TabList
 type TabList = {
